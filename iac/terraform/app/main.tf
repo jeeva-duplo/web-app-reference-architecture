@@ -38,7 +38,7 @@ data "terraform_remote_state" "tenant" {
     bucket               = local.tfstate_bucket
     workspace_key_prefix = "admin:"
     key                  = "tenant"
-    region               = "us-west-2"
+    region               = "us-east-1"
   }
 }
 
@@ -49,6 +49,6 @@ data "terraform_remote_state" "aws-services" {
     bucket               = local.tfstate_bucket
     workspace_key_prefix = "tenant:"
     key                  = "aws-services"
-    region               = "us-west-2"
+    region               = "us-east-1"
   }
 }
