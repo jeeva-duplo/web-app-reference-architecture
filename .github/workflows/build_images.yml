@@ -55,7 +55,7 @@ jobs:
         platforms: linux/amd64
         push: true
         registry: "${{ env.ECR_REPO }}"
-        repo: "dev-${{ vars.DUPLO_TENANT_BASE }}-frontend"
+        repo: "${{ vars.DUPLO_TENANT_BASE }}-dev-frontend"
         build-args: >
           name=${{ github.repository }}
     
@@ -68,5 +68,5 @@ jobs:
         export ECR_REPO
         cd lambda
         docker build -t lambda .
-        docker tag lambda "$ECR_REPO"/dev-${{ vars.DUPLO_TENANT_BASE }}-serverless:main
-        docker push "$ECR_REPO"/dev-${{ vars.DUPLO_TENANT_BASE }}-serverless:main
+        docker tag lambda "$ECR_REPO"/${{ vars.DUPLO_TENANT_BASE }}-dev-serverless:main
+        docker push "$ECR_REPO"/${{ vars.DUPLO_TENANT_BASE }}-dev-serverless:main
