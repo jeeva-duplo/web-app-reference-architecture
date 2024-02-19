@@ -1,6 +1,16 @@
 name: Build and Publish Images
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment to run
+        type: choice
+        default: dev
+        options:
+          - dev
+          - qa
+          - stage
+          - prod
   workflow_call: 
     outputs:
       image:
@@ -55,7 +65,7 @@ jobs:
         platforms: linux/amd64
         push: true
         registry: "${{ env.ECR_REPO }}"
-        repo: "${{ vars.DUPLO_TENANT_BASE }}-dev-frontend"
+        repo: "${{ vars.DUPLO_TENANT_BASE }}-${{inputs.environment}}-frontend"
         build-args: >
           name=${{ github.repository }}
     
@@ -68,5 +78,5 @@ jobs:
         export ECR_REPO
         cd lambda
         docker build -t lambda .
-        docker tag lambda "$ECR_REPO"/${{ vars.DUPLO_TENANT_BASE }}-dev-serverless:main
-        docker push "$ECR_REPO"/${{ vars.DUPLO_TENANT_BASE }}-dev-serverless:main
+        docker tag lambda "$ECR_REPO"/${{ vars.DUPLO_TENANT_BASE }}-${{inputs.environment}}-serverless:main
+        docker push "$ECR_REPO"/${{ vars.DUPLO_TENANT_BASE }}-${{inputs.environment}}-serverless:main
