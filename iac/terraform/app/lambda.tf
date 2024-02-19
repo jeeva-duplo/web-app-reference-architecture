@@ -6,7 +6,7 @@ resource "duplocloud_aws_lambda_function" "app" {
   description = "Sample function that shows using AWS Secrets Manager"
 
   package_type = "Image"
-  image_uri    = "813590939111.dkr.ecr.us-west-2.amazonaws.com/${terraform.workspace}-serverless:main"
+  image_uri    = "463387891060.dkr.ecr.us-east-1.amazonaws.com/${terraform.workspace}-serverless:main"
 
   environment {
     variables = {
