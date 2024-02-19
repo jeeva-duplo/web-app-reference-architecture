@@ -1,0 +1,85 @@
+name: Infrastructure Pipelines
+
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: Module to run
+        type: choice
+        default: admin-tenant
+        options:
+        - admin-tenant
+        - aws-services
+        - app
+      cmd:
+        description: Command to run
+        type: choice
+        default: plan
+        options:
+        - plan
+        - apply
+        - destroy
+      environment:
+        description: Environment to run
+        type: choice
+        default: dev
+        options:
+          - dev
+          - qa
+          - stage
+          - prod
+      
+  workflow_call:
+    inputs:
+      cmd:
+        description: Command to run
+        type: string
+        default: plan
+      module:
+        description: Module to run
+        type: string
+        default: admin-tenant
+      environment:
+        description: Environment to run
+        type: string
+        default: dev
+    secrets:
+      DUPLO_TOKEN:
+        description: Duplo Token
+        required: true
+
+jobs:
+  module:
+    name: ${{ inputs.cmd }} ${{ inputs.environment }} ${{ inputs.module }}
+    runs-on: ubuntu-latest
+    env:
+      DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
+      DUPLO_HOST: ${{ vars.DUPLO_HOST }}
+      DUPLO_TENANT: "${{ vars.DUPLO_TENANT_BASE }}-${{ inputs.environment }}"
+      TF_VAR_integration_api_key: ${{ secrets.INTEGRATION_API_KEY }}
+      TF_CLI_ARGS_apply: -parallelism=1
+    steps:
+
+    - name: Checkout source code
+      uses: actions/checkout@v3
+
+    - name: Duplo and AWS Setup
+      uses: duplocloud/actions/setup@main
+    
+    - name: Terraform Setup
+      uses: duplocloud/actions/setup-terraform@main
+
+    - name: TF Validate Module
+      uses: duplocloud/actions/terraform-module@main
+      with:
+        module: iac/terraform/${{ inputs.module }}
+        test: false
+        fmt: false
+
+    - name: TF Execute Module
+      uses: duplocloud/actions/terraform-exec@main
+      with:
+        module: iac/terraform/${{ inputs.module }}
+        workspace: "${{ vars.DUPLO_TENANT_BASE }}-${{ inputs.environment }}"
+        command: ${{ inputs.cmd }}
+        config: iac/terraform/${{ inputs.module }}/config

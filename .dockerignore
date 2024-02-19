@@ -1,0 +1,9 @@
+node_modules
+dist
+.nvmrc
+.git
+.gitignore
+README.md
+src/*.spec.ts
+iac/
+lambda/

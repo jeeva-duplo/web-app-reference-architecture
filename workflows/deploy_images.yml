@@ -1,0 +1,51 @@
+name: Update Service Docker Image
+
+on: 
+  workflow_dispatch:
+    inputs:
+      image:
+        description: The full image
+        type: string
+        required: true
+      environment:
+        description: Environment to run
+        type: choice
+        default: dev
+        options:
+          - dev
+          - qa
+          - stage
+          - prod
+  workflow_call:
+    inputs:
+      image:
+        description: The full image
+        required: true
+        type: string
+      environment:
+        description: Environment to run
+        type: string
+        required: true
+        default: dev
+    secrets:
+      DUPLO_TOKEN:
+        description: The Duplo API token
+        required: true
+
+jobs:
+  update_service:
+    name: Update Service
+    runs-on: ubuntu-latest
+    env:
+      DUPLO_TOKEN: ${{ secrets.DUPLO_TOKEN }}
+      DUPLO_HOST: ${{ vars.DUPLO_HOST  }}
+      DUPLO_TENANT: "${{ vars.DUPLO_TENANT_BASE }}-${{ inputs.environment }}"
+    steps: 
+    - name: Duplo Setup
+      uses: duplocloud/actions/setup@main
+
+    - name: Update Service
+      uses: duplocloud/actions/update-service@main
+      with:
+        service: frontend
+        image: ${{ inputs.image }}

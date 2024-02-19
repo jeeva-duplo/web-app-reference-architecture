@@ -1,0 +1,14 @@
+formatter: "markdown"
+
+
+
+recursive:
+  enabled: false
+
+sort:
+  enabled: true
+  by: name
+
+settings:
+  output-mode: replace
+  output-file: README.md
